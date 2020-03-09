@@ -4,11 +4,9 @@ from werkzeug.exceptions import HTTPException, InternalServerError
 
 
 def get_response(body, status=200):
-    json_body = {
-        ("value" if status == 200 else "error"): body
-    }
+    json_body = {("value" if status == 200 else "error"): body}
 
-    return Response(json.dumps(json_body), status, mimetype='application/json')
+    return Response(json.dumps(json_body), status, mimetype="application/json")
 
 
 def handle_method_not_allowed():

@@ -9,7 +9,7 @@ def load_dict(language: str, file_name: str) -> Dict:
 
     with open(os.path.join(BASE_URL, language, file_name)) as csvfile:
         csv_reader = csv.reader(csvfile)
-        result = {row[0]: row[1] for row in csv_reader}
+        result = {row[0]: float(row[1]) for row in csv_reader}
 
     return result
 
