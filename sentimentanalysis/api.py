@@ -7,7 +7,7 @@ from werkzeug.exceptions import HTTPException, InternalServerError
 from sentimentanalysis.analizer import SentimentAnalysis
 
 
-def get_response(body: Union[str, dict], status: int = 200, message_as_json: bool=False):
+def get_response(body: Union[str, dict], status: int = 200):
     json_body = {("result" if status == 200 else "error"): body}
 
     return Response(json.dumps(json_body), status, mimetype="application/json")
