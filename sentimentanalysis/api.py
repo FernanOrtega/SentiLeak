@@ -1,22 +1,20 @@
 import json
+from typing import Union
+
 from flask import Flask, request, Response
 from werkzeug.exceptions import HTTPException, InternalServerError
 
+from sentimentanalysis.analizer import SentimentAnalysis
 
-def get_response(body, status=200):
-    json_body = {("value" if status == 200 else "error"): body}
+
+def get_response(body: Union[str, dict], status: int = 200, message_as_json: bool=False):
+    json_body = {("result" if status == 200 else "error"): body}
 
     return Response(json.dumps(json_body), status, mimetype="application/json")
 
 
-def handle_method_not_allowed():
-    message = "The method is not allowed for the requested URL."
-    status_code = 405
-
-    return get_response(message, status_code)
-
-
 app = Flask(__name__)
+sent_analysis = SentimentAnalysis()
 
 
 @app.errorhandler(Exception)
@@ -46,10 +44,16 @@ def get_sentiment_analysis():
         message = "Incorrect mimetype, must be 'application/json'."
         status_code = 415
     else:
-        message = "Ok"
-        status_code = 200
+        request_body = request.get_json()
+        if "text" not in request_body:
+            message = "'text' attribute not present in request body"
+            status_code = 422
+        else:
+            text = request_body["text"]
+            status_code = 200
+            message = sent_analysis.compute_sentiment(text)
 
-    return get_response(message, status=status_code)
+    return get_response(message, status_code, message_as_json=True)
 
 
 @app.route("/")

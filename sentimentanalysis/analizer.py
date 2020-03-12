@@ -50,7 +50,7 @@ class SentimentAnalysis(object):
 
             sentence_score = max_score + min_score
             sent._.sentiment_weight = sentence_score
-            result[i] = sentence_score
+            result[str(sent)] = sentence_score
 
         return result
 
