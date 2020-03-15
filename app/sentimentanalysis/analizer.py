@@ -8,7 +8,7 @@ from spacy.tokens.span import Span
 from spacy.tokens.token import Token
 from itertools import groupby
 
-from sentimentanalysis.dataloader import load_dict
+from .dataloader import load_dict
 
 
 class SentimentAnalysis(object):

@@ -1,0 +1,18 @@
+version: '3.7'
+
+services:
+  sentimentanalysis:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    command: gunicorn -b 0.0.0.0:5000 api:application
+    expose:
+      - 5000
+    env_file:
+      - ./.env
+  nginx:
+    build: ./nginx
+    ports:
+      - 80:80
+    depends_on:
+      - sentimentanalysis

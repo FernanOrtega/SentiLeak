@@ -4,7 +4,7 @@ from typing import Union
 from flask import Flask, request, Response
 from werkzeug.exceptions import HTTPException, InternalServerError
 
-from sentimentanalysis.analizer import SentimentAnalysis
+from sentimentanalysis import SentimentAnalysis
 
 
 def get_response(body: Union[str, dict], status: int = 200):
@@ -13,11 +13,11 @@ def get_response(body: Union[str, dict], status: int = 200):
     return Response(json.dumps(json_body), status, mimetype="application/json")
 
 
-app = Flask(__name__)
+application = Flask(__name__)
 sent_analysis = SentimentAnalysis()
 
 
-@app.errorhandler(Exception)
+@application.errorhandler(Exception)
 def handle_exception(e):
     # pass through HTTP errors
     if isinstance(e, HTTPException):
@@ -27,7 +27,7 @@ def handle_exception(e):
     return get_response(f"500. HTTP Exception. Exception: {e}", 500)
 
 
-@app.errorhandler(InternalServerError)
+@application.errorhandler(InternalServerError)
 def handle_500(e):
     original = getattr(e, "original_exception", None)
 
@@ -38,7 +38,7 @@ def handle_500(e):
     return get_response(f"500. Handled Internal Server Error: {original}", 500)
 
 
-@app.route("/sentimentanalysis", methods=["POST"])
+@application.route("/sentimentanalysis", methods=["POST"])
 def get_sentiment_analysis():
     if not request.is_json:
         message = "Incorrect mimetype, must be 'application/json'."
@@ -53,13 +53,13 @@ def get_sentiment_analysis():
             status_code = 200
             message = sent_analysis.compute_sentiment(text)
 
-    return get_response(message, status_code, message_as_json=True)
+    return get_response(message, status_code)
 
 
-@app.route("/")
+@application.route("/")
 def root():
     return "Everything is working fine"
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    application.run(debug=True)
