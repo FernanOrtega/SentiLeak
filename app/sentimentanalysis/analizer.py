@@ -99,7 +99,7 @@ class SentimentAnnotatorPipe(object):
 
     def __annotate_sentiment_words(self, doc: Doc) -> None:
         for token in doc:
-            if token.pos_ == "ADJ" and not token.is_stop:
+            if token.pos_ == "ADJ":
                 sentiment_weight = self.__sentiment_words.get(token._.stem, 0.0)
                 if sentiment_weight != 0.0:
                     token._.booster_weight = self.__get_self_boosters(token)
