@@ -10,10 +10,23 @@ from itertools import groupby
 
 from .dataloader import load_dict
 
+from spacy.cli import download
+
+
+def load_spacy_model(model_name):
+    try:
+        nlp = spacy.load(model_name)
+    except OSError:
+        print(f"Model {model_name} wasn't found. Downloading now...")
+        download(model_name)
+        nlp = spacy.load(model_name)
+
+    return nlp
+
 
 class SentimentAnalysis(object):
     def __init__(self, language="es"):
-        self.__nlp = spacy.load("es_core_news_md")
+        self.__nlp = load_spacy_model("es_core_news_md")
         stemmer = StemmerPipe(language)
         annotator = SentimentAnnotatorPipe(language)
 
