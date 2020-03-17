@@ -42,7 +42,7 @@ class SentimentAnalysis(object):
                 if score > 0:
                     score = max(1.0, score + token._.booster_weight)
                     if score > max_score:
-                        max_score = max
+                        max_score = score
                 elif score < 0:
                     score = min(-1.0, score - token._.booster_weight)
                     if score < min_score:
