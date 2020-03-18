@@ -14,6 +14,11 @@ from spacy.cli import download
 
 
 def load_spacy_model(model_name):
+    """
+    Method to load SpaCy models. If the model isn't available, it will download it.
+    :param model_name: the name of the SpaCy model
+    :return: the loaded model
+    """
     try:
         nlp = spacy.load(model_name)
     except OSError:
@@ -25,6 +30,10 @@ def load_spacy_model(model_name):
 
 
 class SentimentAnalysis(object):
+    """
+    Sentiment Analysis class. This is the main class to compute Sentiment Analysis. It has a strong dependency with
+    Spacy package since use it to
+    """
     def __init__(self, language="es"):
         self.__nlp = load_spacy_model("es_core_news_md")
         stemmer = StemmerPipe(language)
