@@ -1,0 +1,43 @@
+name: CI for a new dev push
+
+on:
+  push:
+    branches: [ dev ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+
+    # Set up Python
+    - name: Set up Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: '3.7'
+
+    # Install pip dependencies
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements
+        pip install setuptools wheel twine pytest
+
+    # Execute tests
+    - name: Execute pytest
+      run: python -m pytest --doctest-modules --junitxml=junit/test-results.xml
+
+    # Change dev version
+    - name: Change version number
+      run: sed -i -e "s/__dev_version__/.dev$(date '+%y%m%d%H%M')/g" setup.py
+
+    # Build wheel and publish it
+    - name: Build and publish
+      env:
+        TWINE_USERNAME: "__token__"
+        TWINE_PASSWORD: ${{ secrets.PYPI_TEST_API_TOKEN }}
+      run: |
+        python setup.py sdist bdist_wheel
+        twine upload --repository-url https://test.pypi.org/legacy/ dist/*
