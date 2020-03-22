@@ -34,6 +34,7 @@ class SentiLeak(object):
     SentiLeak class. This is the main class to compute sentiment analysis. It has a strong dependency with
     Spacy package since it uses it to text processing.
     """
+
     def __init__(self, language="es"):
         """
         Init method
@@ -61,14 +62,14 @@ class SentiLeak(object):
 
         return result
 
-    def __compute_per_sentence_sentiment(self, doc: Doc) -> Dict:
+    def __compute_per_sentence_sentiment(self, doc: Doc) -> []:
         """
         Internal method to compute sentence-level sentiment.
         :param doc: SpaCy document
         :return: dictionary with sentence-level sentiment
         """
 
-        result = {}
+        result = []
 
         for i, sent in enumerate(doc.sents):
             max_score = 0.0
@@ -87,7 +88,12 @@ class SentiLeak(object):
 
             sentence_score = max_score + min_score
             sent._.sentiment_weight = sentence_score
-            result[str(sent)] = sentence_score
+            dict_sent_result = {
+                "position": i,
+                "text": str(sent),
+                "score": sentence_score,
+            }
+            result.append(dict_sent_result)
 
         return result
 
@@ -116,6 +122,7 @@ class SentimentAnnotatorPipe(object):
 
     It produces, at token-level, all the required annotations to computer both global and sentence-level sentiment.
     """
+
     def __init__(self, language: str = "es"):
         """
         Init method
@@ -228,6 +235,7 @@ class StemmerPipe(object):
 
     It produces, at token-level, the stem version of the token.
     """
+
     def __init__(self, language="es"):
         """
         Init method

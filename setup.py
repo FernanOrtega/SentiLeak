@@ -26,7 +26,7 @@ setup(
     author="FernanOrtega",
     author_email="f.ortega.gallego@gmail.com",
     description="A lexicon-based sentiment analysis for Spanish.",
-    long_description_content_type='text/markdown',
+    long_description_content_type="text/markdown",
     long_description=readme(),
     packages=find_packages(exclude=["test"]),
     licence=licence(),
