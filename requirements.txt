@@ -1,5 +1,3 @@
-SpaCy==2.2.3
-Flask==1.1.1
-gunicorn==20.0.4
-numpy==1.18.1
-snowballstemmer==2.0.0
+SpaCy>=2.2.3,<2.3
+numpy>=1.18.1,<1.19
+snowballstemmer>=2.0.0,<2.1
