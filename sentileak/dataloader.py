@@ -2,7 +2,7 @@ import csv
 import os
 from typing import Dict, List
 
-BASE_URL = f"{os.path.dirname(os.path.realpath(__file__))}/resources"
+BASE_URL = f"{os.path.dirname(os.path.realpath(__file__))}/data"
 
 
 def load_dict(language: str, file_name: str) -> Dict:

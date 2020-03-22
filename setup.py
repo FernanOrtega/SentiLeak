@@ -2,13 +2,8 @@ import os
 
 from setuptools import setup, find_packages
 
-VERSION = "0.1-beta.2"
+VERSION = "0.1b2"
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
-
-
-def licence():
-    with open("LICENSE") as f:
-        return f.read()
 
 
 def readme():
@@ -26,9 +21,10 @@ setup(
     author="FernanOrtega",
     author_email="f.ortega.gallego@gmail.com",
     description="A lexicon-based sentiment analysis for Spanish.",
-    long_description_content_type="text/markdown",
     long_description=readme(),
+    long_description_content_type="text/markdown",
     packages=find_packages(exclude=["test"]),
-    licence=licence(),
-    url="https://fernanortega.es/",
+    include_package_data=True,
+    license="License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    url="https://github.com/FernanOrtega",
 )
