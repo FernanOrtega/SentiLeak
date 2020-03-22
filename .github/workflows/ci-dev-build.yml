@@ -45,7 +45,7 @@ jobs:
     # Check the package
     - name: Check the PyPI test package
       run: |
-        pip uninstall -r requirements.txt
+        y | pip uninstall -r requirements.txt
         package_version="$(grep -oP "VERSION = \"\K\d\.\d[.ba\d]+\.dev\d{10}" setup.py)"
         rm -R sentileak
         pip install --extra-index-url https://test.pypi.org/simple/ SentiLeak==$package_version
