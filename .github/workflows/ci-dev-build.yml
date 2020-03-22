@@ -29,6 +29,13 @@ jobs:
     - name: Execute pytest
       run: python -m pytest -o junit_family=xunit2 --doctest-modules --junitxml=junit/test-results.xml test/
 
+    # Push test results
+    - name: Archive code coverage results
+      uses: actions/upload-artifact@v1
+      with:
+        name: pytest-results
+        path: junit/test-results.xml
+
     # Change dev version
     - name: Change version number
       run: sed -i -e "s/__dev_version__/.dev$(date '+%y%m%d%H%M')/g" setup.py
@@ -41,6 +48,13 @@ jobs:
       run: |
         python setup.py sdist bdist_wheel
         twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+
+    # Push wheel as an artifact
+    - name: Archive production artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: dist
+          path: dist
 
     # Check the package
     - name: Check the PyPI test package
