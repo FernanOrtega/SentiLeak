@@ -29,9 +29,9 @@ def load_spacy_model(model_name):
     return nlp
 
 
-class SentimentAnalysis(object):
+class SentiLeak(object):
     """
-    Sentiment Analysis class. This is the main class to compute Sentiment Analysis. It has a strong dependency with
+    SentiLeak class. This is the main class to compute sentiment analysis. It has a strong dependency with
     Spacy package since it uses it to text processing.
     """
     def __init__(self, language="es"):
