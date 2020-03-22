@@ -27,17 +27,26 @@ jobs:
 
     # Execute tests
     - name: Execute pytest
-      run: python -m pytest --doctest-modules --junitxml=junit/test-results.xml
+      run: python -m pytest -o junit_family=xunit2 --doctest-modules --junitxml=junit/test-results.xml test/
 
     # Change dev version
     - name: Change version number
       run: sed -i -e "s/__dev_version__/.dev$(date '+%y%m%d%H%M')/g" setup.py
 
     # Build wheel and publish it
-    - name: Build and publish
+    - name: Build and publish to PyPI Test
       env:
         TWINE_USERNAME: "__token__"
         TWINE_PASSWORD: ${{ secrets.PYPI_TEST_API_TOKEN }}
       run: |
         python setup.py sdist bdist_wheel
         twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+
+    # Check the package
+    - name: Check the PyPI test package
+      run: |
+        pip uninstall -r requirements.txt
+        package_version="$(grep -oP "VERSION = \"\K\d\.\d[.ba\d]+\.dev\d{10}" setup.py)"
+        rm -R sentileak
+        pip install --extra-index-url https://test.pypi.org/simple/ SentiLeak==$package_version
+        python -m pytest test/
