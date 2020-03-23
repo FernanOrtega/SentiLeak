@@ -61,7 +61,7 @@ jobs:
     # Wait for the package to be ready
     - uses: nev7n/wait_for_response@v1
       with:
-        url: 'https://test.pypi.org/SentiLeak/'${{PACKAGE_VERSION}}
+        url: 'https://test.pypi.org/SentiLeak/'$PACKAGE_VERSION
         responseCode: 200
         timeout: 2000
         interval: 500
