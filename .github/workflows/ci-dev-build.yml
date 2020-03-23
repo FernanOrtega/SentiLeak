@@ -38,7 +38,9 @@ jobs:
 
     # Change dev version
     - name: Change version number
-      run: sed -i -e "s/__dev_version__/.dev$(date '+%y%m%d%H%M')/g" setup.py
+      run: |
+        sed -i -e "s/__dev_version__/.dev$(date '+%y%m%d%H%M')/g" setup.py
+        echo "::set-env=PACKAGE_VERSION="$(grep -oP "VERSION = \"\K\d\.\d[.ba\d]+\.dev\d{10}" setup.py)"
 
     # Build wheel and publish it
     - name: Build and publish to PyPI Test
@@ -56,11 +58,18 @@ jobs:
         name: dist
         path: dist
 
+    # Wait for the package to be ready
+    - uses: nev7n/wait_for_response@v1
+      with:
+        url: 'https://test.pypi.org/SentiLeak/'${{PACKAGE_VERSION}}
+        responseCode: 200
+        timeout: 2000
+        interval: 500
+
     # Check the package
     - name: Check the PyPI test package
       run: |
         pip uninstall -y -r requirements.txt
-        package_version="$(grep -oP "VERSION = \"\K\d\.\d[.ba\d]+\.dev\d{10}" setup.py)"
         rm -R sentileak
-        pip install --extra-index-url https://test.pypi.org/simple/ SentiLeak==$package_version
+        pip install --extra-index-url https://test.pypi.org/simple/ SentiLeak==$PACKAGE_VERSION
         python -m pytest test/
