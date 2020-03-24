@@ -41,6 +41,6 @@ This is an example of usage:
 ````
 
 ## Contributor
-The main (and the only) contributor is [FernanOrtega](https://github.com/FernanOrtega). 
+The main (and the only) contributor is <a href="https://github.com/FernanOrtega" target="_blank">FernanOrtega</a> 
 
-This project has also the support of [Opileak](https://www.opileak.com).
+This project has also the support of <a href="https://www.opileak.es" target="_blank">Opileak</a>
