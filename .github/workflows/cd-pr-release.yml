@@ -1,0 +1,96 @@
+name: CD after an approved PR from dev to master
+
+on:
+  push:
+    branches:
+      - master
+    pull_request:
+      branches:
+        - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+
+    # Set up Python
+    - name: Set up Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: '3.7'
+
+    # Install pip dependencies
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install setuptools wheel twine
+
+    # Remove dev version
+    - name: Remove .dev version number
+      run: sed -i -e "s/__dev_version__//g" setup.py
+
+    # Get version number
+    - name: Get version number
+      run: echo "::set-env name=PACKAGE_VERSION::$(grep -oP "VERSION = \"\K\d\.\d[.ba\d]+" setup.py)"
+
+    # Build wheel and publish it
+    - name: Build and publish to PyPI
+      env:
+        TWINE_USERNAME: "__token__"
+        TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+      run: |
+        python setup.py sdist bdist_wheel
+        twine upload dist/*
+
+    # Push wheel as an artifact
+    - name: Archive wheel
+      uses: actions/upload-artifact@v1
+      with:
+        name: dist
+        path: dist
+
+    # Check the package
+    - name: Check the PyPI test package
+      run: |
+        rm -R sentileak
+        set -eux
+        declare -r HOST="https://pypi.org/project/SentiLeak/$PACKAGE_VERSION/"
+
+        wait-for-url() {
+            echo "Testing $1"
+            timeout -s TERM 45 bash -c \
+            'while [[ "$(curl -s -o /dev/null -L -w ''%{http_code}'' ${0})" != "200" ]];\
+            do echo "Waiting for ${0}" && sleep 2;\
+            done' ${1}
+            echo "OK!"
+            curl -I $1
+        }
+        wait-for-url ${HOST}
+
+        pip install SentiLeak==$PACKAGE_VERSION
+
+    - name: Create Release
+        id: create_release
+        uses: actions/create-release@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ PACKAGE_VERSION }}
+          release_name: SentiLeak - v${{ PACKAGE_VERSION }}
+          body: |
+            TODO
+          draft: true
+          prerelease: false
+    - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/SentiLeak-${{ PACKAGE_VERSION }}-py3-none-any.whl
+          asset_name: SentiLeak-${{ PACKAGE_VERSION }}-py3-none-any.whl
+          asset_content_type: application/zip
