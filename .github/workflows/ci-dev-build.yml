@@ -38,9 +38,11 @@ jobs:
 
     # Change dev version
     - name: Change version number
-      run: |
-        sed -i -e "s/__dev_version__/.dev$(date '+%y%m%d%H%M')/g" setup.py
-        echo "::set-env=PACKAGE_VERSION="$(grep -oP "VERSION = \"\K\d\.\d[.ba\d]+\.dev\d{10}" setup.py)"
+      run: sed -i -e "s/__dev_version__/.dev$(date '+%y%m%d%H%M')/g" setup.py
+
+    # Get version number
+    - name: Get version number
+      run: echo "::set-env=PACKAGE_VERSION="$(grep -oP "VERSION = \"\K\d\.\d[.ba\d]+\.dev\d{10}" setup.py)"
 
     # Build wheel and publish it
     - name: Build and publish to PyPI Test
