@@ -42,7 +42,7 @@ jobs:
 
     # Get version number
     - name: Get version number
-      run: echo "::set-env=PACKAGE_VERSION="$(grep -oP "VERSION = \"\K\d\.\d[.ba\d]+\.dev\d{10}" setup.py)"
+      run: echo "::set-env name=PACKAGE_VERSION::$(grep -oP "VERSION = \"\K\d\.\d[.ba\d]+\.dev\d{10}" setup.py)"
 
     # Build wheel and publish it
     - name: Build and publish to PyPI Test
