@@ -1,3 +1,5 @@
+![CI for a new dev push](https://github.com/FernanOrtega/SentiLeak/workflows/CI%20for%20a%20new%20dev%20push/badge.svg?branch=dev&event=push)
+
 # SentiLeak
 This is a lexicon-based sentiment analysis package for Python.
 
@@ -39,6 +41,6 @@ This is an example of usage:
 ````
 
 ## Contributor
-The main (and the only) contributor is [FernanOrtega](https://github.com/FernanOrtega). 
+The main (and the only) contributor is <a href="https://github.com/FernanOrtega" target="_blank">FernanOrtega</a> 
 
-This project has also the support of [Opileak](https://www.opileak.com).
+This project has also the support of <a href="https://www.opileak.es" target="_blank">Opileak</a>
