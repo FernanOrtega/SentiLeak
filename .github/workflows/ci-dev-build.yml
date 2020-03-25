@@ -79,7 +79,7 @@ jobs:
             echo "OK!"
             curl -I $1
         }
-        wait-for-url http://${HOST}
+        wait-for-url ${HOST}
 
         pip install --extra-index-url https://test.pypi.org/simple/ SentiLeak==$PACKAGE_VERSION
         python -m pytest test/
