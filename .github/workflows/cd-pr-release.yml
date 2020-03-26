@@ -67,6 +67,7 @@ jobs:
             do echo "Waiting for ${0}" && sleep 2;\
             done' ${1}
             echo "OK!"
+            sleep 5
             curl -I $1
         }
         wait-for-url ${HOST}
