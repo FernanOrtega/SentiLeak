@@ -35,7 +35,7 @@ jobs:
     # Get version number
     - name: Get version number
       id: get_version_number
-      run: echo "::set-env name=PACKAGE_VERSION::$(grep -oP "VERSION = \"\K\d\.\d[.ba\d]+" setup.py)"
+      run: echo "::set-output name=PACKAGE_VERSION::$(grep -oP "VERSION = \"\K\d\.\d[.ba\d]+" setup.py)"
 
     # Build wheel and publish it
     - name: Build and publish to PyPI
@@ -57,7 +57,7 @@ jobs:
     - name: Check the PyPI test package
       run: |
         set -eux
-        declare -r HOST="https://pypi.org/project/SentiLeak/$PACKAGE_VERSION/"
+        declare -r HOST="https://pypi.org/project/SentiLeak/${{ steps.get_version_number.output.PACKAGE_VERSION }}/"
 
         wait-for-url() {
             echo "Testing $1"
@@ -77,8 +77,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: $PACKAGE_VERSION
-        release_name: SentiLeak - v$PACKAGE_VERSION
+        tag_name: ${{ steps.get_version_number.output.PACKAGE_VERSION }}
+        release_name: SentiLeak - v${{ steps.get_version_number.output.PACKAGE_VERSION }}
         body: |
           TODO
         draft: true
@@ -90,6 +90,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./dist/SentiLeak-$PACKAGE_VERSION-py3-none-any.whl
-        asset_name: SentiLeak-$PACKAGE_VERSION-py3-none-any.whl
+        asset_path: ./dist/SentiLeak-${{ steps.get_version_number.output.PACKAGE_VERSION }}-py3-none-any.whl
+        asset_name: SentiLeak-${{ steps.get_version_number.output.PACKAGE_VERSION }}-py3-none-any.whl
         asset_content_type: application/zip
