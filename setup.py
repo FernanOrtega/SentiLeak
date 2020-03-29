@@ -2,7 +2,7 @@ import os
 
 from setuptools import setup, find_packages
 
-VERSION = "0.1b4__dev_version__"
+VERSION = "0.1b5__dev_version__"
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
