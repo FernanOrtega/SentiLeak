@@ -1,9 +1,6 @@
 name: CD after an approved PR from dev to master
 
 on:
-  push:
-    branches:
-      - master
   pull_request:
     branches:
       - master
