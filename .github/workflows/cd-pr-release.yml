@@ -56,7 +56,6 @@ jobs:
     # Check the package
     - name: Check the PyPI test package
       run: |
-        rm -R sentileak
         set -eux
         declare -r HOST="https://pypi.org/project/SentiLeak/$PACKAGE_VERSION/"
 
@@ -71,8 +70,6 @@ jobs:
             curl -I $1
         }
         wait-for-url ${HOST}
-
-        pip install SentiLeak==$PACKAGE_VERSION
 
     - name: Create Release
       id: create_release
