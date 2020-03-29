@@ -35,7 +35,7 @@ jobs:
     # Get version number
     - name: Get version number
       id: get_version_number
-      run: echo "::set-env name=PACKAGE_VERSION::$(grep -oP "VERSION = \"\K\d\.\d[.ba\d]+" setup.py)"
+      run: echo "::set-output name=PACKAGE_VERSION::$(grep -oP "VERSION = \"\K\d\.\d[.ba\d]+" setup.py)"
 
     # Build wheel and publish it
     - name: Build and publish to PyPI
