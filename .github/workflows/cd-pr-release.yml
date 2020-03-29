@@ -4,9 +4,9 @@ on:
   push:
     branches:
       - master
-    pull_request:
-      branches:
-        - master
+  pull_request:
+    branches:
+      - master
 
 jobs:
   release:
@@ -56,7 +56,6 @@ jobs:
     # Check the package
     - name: Check the PyPI test package
       run: |
-        rm -R sentileak
         set -eux
         declare -r HOST="https://pypi.org/project/SentiLeak/$PACKAGE_VERSION/"
 
@@ -67,11 +66,10 @@ jobs:
             do echo "Waiting for ${0}" && sleep 2;\
             done' ${1}
             echo "OK!"
+            sleep 5
             curl -I $1
         }
         wait-for-url ${HOST}
-
-        pip install SentiLeak==$PACKAGE_VERSION
 
     - name: Create Release
       id: create_release
@@ -79,8 +77,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ steps.get_version_number.envs.PACKAGE_VERSION }}
-        release_name: SentiLeak - v${{ steps.get_version_number.envs.PACKAGE_VERSION }}
+        tag_name: ${{ env.PACKAGE_VERSION }}
+        release_name: SentiLeak - v${{ env.PACKAGE_VERSION }}
         body: |
           TODO
         draft: true
@@ -92,6 +90,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./dist/SentiLeak-${{ steps.get_version_number.envs.PACKAGE_VERSION }}-py3-none-any.whl
-        asset_name: SentiLeak-${{ steps.get_version_number.envs.PACKAGE_VERSION }}-py3-none-any.whl
+        asset_path: dist/SentiLeak-${{ env.PACKAGE_VERSION }}-py3-none-any.whl
+        asset_name: SentiLeak-${{ env.PACKAGE_VERSION }}-py3-none-any.whl
         asset_content_type: application/zip
