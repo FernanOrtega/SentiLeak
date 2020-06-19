@@ -154,11 +154,11 @@ class SentimentAnnotatorPipe(object):
         :return:
         """
         for token in doc:
-            if token.pos_ == "ADJ":
-                sentiment_weight = self.__sentiment_words.get(token._.stem, 0.0)
-                if sentiment_weight != 0.0:
-                    token._.booster_weight = self.__get_self_boosters(token)
-                    token._.sentiment_weight = sentiment_weight
+            # if token.pos_ == "ADJ": -> It seems that this filter doesn't work well
+            sentiment_weight = self.__sentiment_words.get(token._.stem, 0.0)
+            if sentiment_weight != 0.0:
+                token._.booster_weight = self.__get_self_boosters(token)
+                token._.sentiment_weight = sentiment_weight
 
     def __annotate_negations_and_boosters(self, doc: Doc) -> None:
         """
