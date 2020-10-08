@@ -40,7 +40,7 @@ class SentiLeak(object):
         Init method
         :param language: input language
         """
-        self.__nlp = load_spacy_model("es_core_news_md")
+        self.__nlp = load_spacy_model("es_core_news_sm")
         stemmer = StemmerPipe(language)
         annotator = SentimentAnnotatorPipe(language)
 
@@ -242,7 +242,7 @@ class StemmerPipe(object):
         :param language: input language
         """
         self.__stemmer = snowballstemmer.stemmer("spanish")
-        Token.set_extension("stem", default="")
+        Token.set_extension("stem", default="", force=True)
 
     def __call__(self, doc: Doc) -> Doc:
         """
