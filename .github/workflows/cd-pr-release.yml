@@ -34,6 +34,8 @@ jobs:
     # Get version number
     - name: Get version number
       id: get_version_number
+      env:
+        ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
       run: echo "::set-env name=PACKAGE_VERSION::$(grep -oP "VERSION = \"\K\d\.\d[.ba\d]+" setup.py)"
 
     # Build wheel and publish it
