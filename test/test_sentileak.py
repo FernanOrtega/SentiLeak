@@ -29,4 +29,4 @@ def test_custom_base_url_not_found():
 
 
 def test_custom_base_url():
-    _ = SentiLeak(custom_base_url=f"../sentileak/data")
+    _ = SentiLeak(custom_base_url=f"./sentileak/data")
