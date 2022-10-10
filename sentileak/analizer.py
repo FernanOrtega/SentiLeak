@@ -35,14 +35,14 @@ class SentiLeak(object):
     Spacy package since it uses it to text processing.
     """
 
-    def __init__(self, language="es"):
+    def __init__(self, language="es", custom_base_url: str = None):
         """
         Init method
         :param language: input language
         """
         self.__nlp = load_spacy_model("es_core_news_sm")
         stemmer = StemmerPipe(language)
-        annotator = SentimentAnnotatorPipe(language)
+        annotator = SentimentAnnotatorPipe(language, custom_base_url=custom_base_url)
 
         self.__nlp.add_pipe(stemmer)
         self.__nlp.add_pipe(annotator)
@@ -123,14 +123,19 @@ class SentimentAnnotatorPipe(object):
     It produces, at token-level, all the required annotations to computer both global and sentence-level sentiment.
     """
 
-    def __init__(self, language: str = "es"):
+    def __init__(self, language: str = "es", custom_base_url: str = None):
         """
         Init method
         :param language: language of the annotation
         """
-        self.__sentiment_words = load_dict(language, "sentiment_words.csv")
-        self.__boosters = load_dict(language, "boosters.csv")
-        self.__negations = load_dict(language, "negations.csv")
+        if custom_base_url:
+            self.__sentiment_words = load_dict(language, "sentiment_words.csv", base_url=custom_base_url)
+            self.__boosters = load_dict(language, "boosters.csv", base_url=custom_base_url)
+            self.__negations = load_dict(language, "negations.csv", base_url=custom_base_url)
+        else:
+            self.__sentiment_words = load_dict(language, "sentiment_words.csv")
+            self.__boosters = load_dict(language, "boosters.csv")
+            self.__negations = load_dict(language, "negations.csv")
         Span.set_extension("sentiment_weight", default=0.0, force=True)
         Token.set_extension("sentiment_weight", default=0.0, force=True)
         Token.set_extension("negation_weight", default=1.0, force=True)
@@ -172,7 +177,7 @@ class SentimentAnnotatorPipe(object):
                     influenced_token = self.__get_influenced_token(sentence, i)
                     if influenced_token:
                         influenced_token._.negation_weight = (
-                            self.__negations.get(token) * -1
+                                self.__negations.get(token) * -1
                         )
                 elif token in self.__boosters:
                     influenced_token = self.__get_influenced_token(sentence, i)
@@ -210,7 +215,7 @@ class SentimentAnnotatorPipe(object):
         return (
             1.0
             if (token.shape_.count("X") / len(token)) > 0.8
-            or self.__max_rep_letters(token) >= 3
+               or self.__max_rep_letters(token) >= 3
             else 0.0
         )
 
