@@ -2,6 +2,7 @@ from typing import Dict
 
 import snowballstemmer
 import spacy
+from spacy import Language
 
 from spacy.tokens.doc import Doc
 from spacy.tokens.span import Span
@@ -41,11 +42,11 @@ class SentiLeak(object):
         :param language: input language
         """
         self.__nlp = load_spacy_model("es_core_news_sm")
-        stemmer = StemmerPipe(language)
-        annotator = SentimentAnnotatorPipe(language, custom_base_url=custom_base_url)
+        # stemmer = StemmerPipe(language)
+        # annotator = SentimentAnnotatorPipe(language, custom_base_url=custom_base_url)
 
-        self.__nlp.add_pipe(stemmer)
-        self.__nlp.add_pipe(annotator)
+        self.__nlp.add_pipe("stemmer_pipe")
+        self.__nlp.add_pipe("sentiment_annotator_pipe")
 
     def compute_sentiment(self, text: str, language="es") -> Dict:
         """
@@ -114,6 +115,11 @@ class SentiLeak(object):
                 min_score = sent._.sentiment_weight
 
         return max_score + min_score
+
+
+@Language.factory("sentiment_annotator_pipe")
+def create_sentiment_annotator(nlp, name):
+    return SentimentAnnotatorPipe()
 
 
 class SentimentAnnotatorPipe(object):
@@ -232,6 +238,11 @@ class SentimentAnnotatorPipe(object):
             key=lambda i: i[1],
             reverse=True,
         )[0][1]
+
+
+@Language.factory("stemmer_pipe")
+def create_stemmer_pipe(nlp, name):
+    return StemmerPipe()
 
 
 class StemmerPipe(object):
