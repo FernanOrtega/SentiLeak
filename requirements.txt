@@ -1,3 +1,3 @@
-SpaCy>=2.2.3,<2.3
-numpy>=1.18.1,<1.19
-snowballstemmer>=2.0.0,<2.1
+SpaCy>=3.4.1,<3.5
+numpy>=1.21.6,<1.22
+snowballstemmer>=2.2.0,<2.3
