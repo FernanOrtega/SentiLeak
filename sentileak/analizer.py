@@ -46,7 +46,8 @@ class SentiLeak(object):
         # annotator = SentimentAnnotatorPipe(language, custom_base_url=custom_base_url)
 
         self.__nlp.add_pipe("stemmer_pipe")
-        self.__nlp.add_pipe("sentiment_annotator_pipe")
+        self.__nlp.add_pipe("sentiment_annotator_pipe", config={"language": language,
+                                                                "custom_base_url": custom_base_url})
 
     def compute_sentiment(self, text: str, language="es") -> Dict:
         """
@@ -118,8 +119,8 @@ class SentiLeak(object):
 
 
 @Language.factory("sentiment_annotator_pipe")
-def create_sentiment_annotator(nlp, name):
-    return SentimentAnnotatorPipe()
+def create_sentiment_annotator(nlp, name, language, custom_base_url):
+    return SentimentAnnotatorPipe(language, custom_base_url)
 
 
 class SentimentAnnotatorPipe(object):
