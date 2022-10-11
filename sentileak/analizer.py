@@ -49,22 +49,23 @@ class SentiLeak(object):
         self.__nlp.add_pipe("sentiment_annotator_pipe", config={"language": language,
                                                                 "custom_base_url": custom_base_url})
 
-    def compute_sentiment(self, text: str, language="es") -> Dict:
+    def compute_sentiment(self, text: str, language="es", verbose: bool = False) -> Dict:
         """
         Method to compute sentiment of an input text. Default language is Spanish.
         :param text: input text
         :param language: language of input text
+        :param verbose: whether to add detected sentiment words or not
         :return: a dictionary that contains both global sentiment and sentence-level sentiment
         """
         result = {}
         doc = self.__nlp(text)
 
-        result["per_sentence_sentiment"] = self.__compute_per_sentence_sentiment(doc)
+        result["per_sentence_sentiment"] = self.__compute_per_sentence_sentiment(doc, verbose)
         result["global_sentiment"] = self.__compute_global_sentiment(doc)
 
         return result
 
-    def __compute_per_sentence_sentiment(self, doc: Doc) -> []:
+    def __compute_per_sentence_sentiment(self, doc: Doc, verbose: bool) -> []:
         """
         Internal method to compute sentence-level sentiment.
         :param doc: SpaCy document
@@ -73,11 +74,14 @@ class SentiLeak(object):
 
         result = []
 
-        for i, sent in enumerate(doc.sents):
+        for sent_idx, sent in enumerate(doc.sents):
             max_score = 0.0
             min_score = 0.0
 
-            for token in sent:
+            if verbose:
+                sentiment_tokens = {}
+
+            for token_idx, token in enumerate(sent):
                 score = token._.sentiment_weight * token._.negation_weight
                 if score > 0:
                     score = max(1.0, score + token._.booster_weight)
@@ -88,13 +92,22 @@ class SentiLeak(object):
                     if score < min_score:
                         min_score = score
 
+                if verbose and score != 0:
+                    sentiment_tokens[token_idx] = {
+                        "token": token,
+                        "sentiment": token._.sentiment_weight
+                    }
+
             sentence_score = max_score + min_score
             sent._.sentiment_weight = sentence_score
             dict_sent_result = {
-                "position": i,
+                "position": sent_idx,
                 "text": str(sent),
                 "score": sentence_score,
             }
+            if verbose:
+                dict_sent_result["sentiment_tokens"] = sentiment_tokens
+
             result.append(dict_sent_result)
 
         return result
